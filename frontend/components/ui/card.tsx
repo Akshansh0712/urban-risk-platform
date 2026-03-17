@@ -1,29 +1,23 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import type { ReactNode } from "react";
 
-interface CardProps {
+interface Props extends HTMLMotionProps<"div"> {
   children: ReactNode;
-  className?: string;
   glass?: boolean;
-  animate?: boolean;
 }
 
-export default function Card({ children, className = "", glass = false, animate = true }: CardProps) {
-  const base =
-    "bg-panel border border-border rounded-xl p-5 shadow-[0_4px_24px_rgba(0,0,0,0.4)]";
-  const glassStyle = glass ? "backdrop-blur-sm bg-panel/80" : "";
-
-  if (!animate) {
-    return <div className={`${base} ${glassStyle} ${className}`}>{children}</div>;
-  }
-
+export default function Card({ children, glass, className = "", ...rest }: Props) {
   return (
     <motion.div
-      className={`${base} ${glassStyle} ${className}`}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
+      transition={{ duration: 0.3 }}
+      className={`bg-panel border border-border rounded-xl p-5
+        shadow-[0_4px_24px_rgba(0,0,0,0.4)]
+        ${glass ? "backdrop-blur-sm bg-panel/80" : ""}
+        ${className}`}
+      {...rest}
     >
       {children}
     </motion.div>

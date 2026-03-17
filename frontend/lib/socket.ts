@@ -9,25 +9,14 @@ export function getSocket(): Socket {
       reconnectionAttempts: 10,
       reconnectionDelay: 2000,
     });
-
-    socket.on("connect", () => {
-      console.log("[Socket] Connected:", socket?.id);
-    });
-
-    socket.on("disconnect", (reason) => {
-      console.warn("[Socket] Disconnected:", reason);
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("[Socket] Connection error:", err.message);
-    });
+    socket.on("connect",       () => console.info("[WS] connected:", socket?.id));
+    socket.on("disconnect",    (r) => console.warn("[WS] disconnected:", r));
+    socket.on("connect_error", (e) => console.error("[WS] error:", e.message));
   }
   return socket;
 }
 
-export function disconnectSocket(): void {
-  if (socket) {
-    socket.disconnect();
-    socket = null;
-  }
+export function disconnectSocket() {
+  socket?.disconnect();
+  socket = null;
 }

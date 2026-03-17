@@ -1,8 +1,9 @@
-// frontend/lib/map-config.ts
+export const OSM_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+export const OSM_ATTRIBUTION =
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
 export const DEFAULT_CENTER: [number, number] = [22.7196, 75.8577];
-
-export const DEFAULT_ZOOM = 12;
+export const DEFAULT_ZOOM = 13;
 
 export const RISK_COLORS = {
   HIGH: "#EF4444",

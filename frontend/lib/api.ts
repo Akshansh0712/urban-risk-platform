@@ -1,146 +1,75 @@
 import type {
-  RiskAssessment,
-  AlertsResponse,
-  AlertStats,
-  WeatherResponse,
-  TrafficResponse,
-  HeatmapResponse,
-  CameraListResponse,
-  CameraStats,
-  RiskHistoryResponse,
-  TrafficWeatherResponse,
-  LatestRisk,
-  SocialResponse,
-  EventsResponse,
+  RiskAssessment, AlertsResponse, AlertStats, WeatherResponse,
+  TrafficResponse, HeatmapResponse, CameraListResponse, CameraStats,
+  RiskHistoryResponse, TrafficWeatherResponse, LatestRisk,
+  SocialResponse, EventsResponse,
 } from "./types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-// ── Risk ──────────────────────────────────────
-
-export async function fetchCurrentRisk(zoneId = "indore-center"): Promise<RiskAssessment> {
-  const res = await fetch(
-    `${BASE_URL}/api/risk/current?zone_id=${zoneId}&force=true`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) throw new Error(`Risk API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchLatestRisk(): Promise<LatestRisk> {
-  const res = await fetch(`${BASE_URL}/api/risk/latest`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Latest risk API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchRiskHistory(hours = 24): Promise<RiskHistoryResponse> {
-  const res = await fetch(`${BASE_URL}/api/risk/history?hours=${hours}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Risk history API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchRiskHeatmap(): Promise<HeatmapResponse> {
-  const res = await fetch(`${BASE_URL}/api/risk/heatmap`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Heatmap API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchRiskExplain(zoneId = "indore-center"): Promise<RiskAssessment> {
-  const res = await fetch(`${BASE_URL}/api/risk/explain/${zoneId}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Explain API failed: ${res.status}`);
-  return res.json();
-}
-
-// ── Alerts ────────────────────────────────────
-
-export async function fetchActiveAlerts(severity?: string): Promise<AlertsResponse> {
-  const url = severity
-    ? `${BASE_URL}/api/alerts/active?severity=${severity}`
-    : `${BASE_URL}/api/alerts/active`;
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Alerts API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchAlertHistory(hours = 24): Promise<AlertsResponse> {
-  const res = await fetch(`${BASE_URL}/api/alerts/history?hours=${hours}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Alert history API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function fetchAlertStats(): Promise<AlertStats> {
-  const res = await fetch(`${BASE_URL}/api/alerts/stats`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Alert stats API failed: ${res.status}`);
-  return res.json();
-}
-
-export async function acknowledgeAlert(alertId: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/alerts/acknowledge/${alertId}`, {
-    method: "PATCH",
+const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const get = (url: string) =>
+  fetch(url, { cache: "no-store" }).then((r) => {
+    if (!r.ok) throw new Error(`${url} → ${r.status}`);
+    return r.json();
   });
-  if (!res.ok) throw new Error(`Acknowledge API failed: ${res.status}`);
-}
 
-export async function resolveAlert(alertId: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/alerts/resolve/${alertId}`, {
-    method: "PATCH",
+// ── Risk ──────────────────────────────────────────────────────────────────────
+export const fetchCurrentRisk = (zoneId = "indore-center"): Promise<RiskAssessment> =>
+  get(`${BASE}/api/risk/current?zone_id=${zoneId}&force=true`);
+
+export const fetchLatestRisk = (): Promise<LatestRisk> =>
+  get(`${BASE}/api/risk/latest`);
+
+export const fetchRiskHistory = (hours = 24): Promise<RiskHistoryResponse> =>
+  get(`${BASE}/api/risk/history?hours=${hours}`);
+
+export const fetchRiskHeatmap = (): Promise<HeatmapResponse> =>
+  get(`${BASE}/api/risk/heatmap`);
+
+export const fetchRiskExplain = (zoneId = "indore-center"): Promise<RiskAssessment> =>
+  get(`${BASE}/api/risk/explain/${zoneId}`);
+
+// ── Alerts ────────────────────────────────────────────────────────────────────
+export const fetchActiveAlerts = (severity?: string): Promise<AlertsResponse> =>
+  get(`${BASE}/api/alerts/active${severity ? `?severity=${severity}` : ""}`);
+
+export const fetchAlertHistory = (hours = 24): Promise<AlertsResponse> =>
+  get(`${BASE}/api/alerts/history?hours=${hours}`);
+
+export const fetchAlertStats = (): Promise<AlertStats> =>
+  get(`${BASE}/api/alerts/stats`);
+
+export const acknowledgeAlert = (id: string): Promise<void> =>
+  fetch(`${BASE}/api/alerts/acknowledge/${id}`, { method: "PATCH" }).then((r) => {
+    if (!r.ok) throw new Error(`Acknowledge failed: ${r.status}`);
   });
-  if (!res.ok) throw new Error(`Resolve API failed: ${res.status}`);
-}
 
-// ── Data ──────────────────────────────────────
+export const resolveAlert = (id: string): Promise<void> =>
+  fetch(`${BASE}/api/alerts/resolve/${id}`, { method: "PATCH" }).then((r) => {
+    if (!r.ok) throw new Error(`Resolve failed: ${r.status}`);
+  });
 
-export async function fetchWeather(limit = 1): Promise<WeatherResponse> {
-  const res = await fetch(`${BASE_URL}/api/data/weather?limit=${limit}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Weather API failed: ${res.status}`);
-  return res.json();
-}
+// ── Data ──────────────────────────────────────────────────────────────────────
+export const fetchWeather = (limit = 1): Promise<WeatherResponse> =>
+  get(`${BASE}/api/data/weather?limit=${limit}`);
 
-export async function fetchTraffic(limit = 1): Promise<TrafficResponse> {
-  const res = await fetch(`${BASE_URL}/api/data/traffic?limit=${limit}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Traffic API failed: ${res.status}`);
-  return res.json();
-}
+export const fetchTraffic = (limit = 1): Promise<TrafficResponse> =>
+  get(`${BASE}/api/data/traffic?limit=${limit}`);
 
-export async function fetchEvents(): Promise<EventsResponse> {
-  const res = await fetch(`${BASE_URL}/api/data/events`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Events API failed: ${res.status}`);
-  return res.json();
-}
+export const fetchEvents = (): Promise<EventsResponse> =>
+  get(`${BASE}/api/data/events`);
 
-export async function fetchSocial(): Promise<SocialResponse> {
-  const res = await fetch(`${BASE_URL}/api/data/social`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Social API failed: ${res.status}`);
-  return res.json();
-}
+export const fetchSocial = (): Promise<SocialResponse> =>
+  get(`${BASE}/api/data/social`);
 
-export async function fetchTrafficWeather(hours = 24): Promise<TrafficWeatherResponse> {
-  const res = await fetch(
-    `${BASE_URL}/api/data/analytics/traffic-weather?hours=${hours}`,
-    { cache: "no-store" }
-  );
-  if (!res.ok) throw new Error(`Analytics API failed: ${res.status}`);
-  return res.json();
-}
+export const fetchTrafficWeather = (hours = 24): Promise<TrafficWeatherResponse> =>
+  get(`${BASE}/api/data/analytics/traffic-weather?hours=${hours}`);
 
-// ── Cameras ───────────────────────────────────
+// ── Cameras ───────────────────────────────────────────────────────────────────
+export const fetchCameraList = (): Promise<CameraListResponse> =>
+  get(`${BASE}/api/camera/list`);
 
-export async function fetchCameraList(): Promise<CameraListResponse> {
-  const res = await fetch(`${BASE_URL}/api/camera/list`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Camera list API failed: ${res.status}`);
-  return res.json();
-}
+export const fetchCameraStats = (id: string): Promise<CameraStats> =>
+  get(`${BASE}/api/camera/stats/${id}`);
 
-export async function fetchCameraStats(cameraId: string): Promise<CameraStats> {
-  const res = await fetch(`${BASE_URL}/api/camera/stats/${cameraId}`, { cache: "no-store" });
-  if (!res.ok) throw new Error(`Camera stats API failed: ${res.status}`);
-  return res.json();
-}
-
-export function getCameraStreamUrl(cameraId: string): string {
-  return `${BASE_URL}/api/camera/stream/${cameraId}`;
-}
-
-export function getCameraSnapshotUrl(cameraId: string): string {
-  return `${BASE_URL}/api/camera/snapshot/${cameraId}`;
-}
+export const getCameraStreamUrl = (id: string) =>
+  `${BASE}/api/camera/stream/${id}`;

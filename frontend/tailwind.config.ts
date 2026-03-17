@@ -10,24 +10,32 @@ const config: Config = {
     extend: {
       colors: {
         background: "#0B0F1A",
-        panel: "#141A2F",
-        border: "#1E293B",
-        accent: "#3B82F6",
+        panel:      "#141A2F",
+        border:     "#1E293B",
+        accent:     "#3B82F6",
         risk: {
-          high: "#EF4444",
+          high:   "#EF4444",
           medium: "#F97316",
-          safe: "#22C55E",
+          safe:   "#22C55E",
         },
         text: {
-          primary: "#F1F5F9",
+          primary:   "#F1F5F9",
           secondary: "#94A3B8",
-          muted: "#475569",
+          muted:     "#475569",
         },
       },
       fontFamily: {
-        mono: ["'JetBrains Mono'", "monospace"],
+        mono:    ["'JetBrains Mono'", "monospace"],
         display: ["'Syne'", "sans-serif"],
-        body: ["'DM Sans'", "sans-serif"],
+        body:    ["'DM Sans'", "sans-serif"],
+      },
+      keyframes: {
+        "pulse-slow": { "0%,100%": { opacity: "1" }, "50%": { opacity: "0.4" } },
+        scanline: { "0%": { transform: "translateY(-100%)" }, "100%": { transform: "translateY(400%)" } },
+      },
+      animation: {
+        "pulse-slow": "pulse-slow 2s ease-in-out infinite",
+        scanline:     "scanline 3s linear infinite",
       },
     },
   },

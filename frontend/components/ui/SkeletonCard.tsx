@@ -1,9 +1,9 @@
-export default function SkeletonCard({ lines = 3 }: { lines?: number }) {
+export default function SkeletonCard({ lines = 3, className = "" }: { lines?: number; className?: string }) {
   return (
-    <div className="bg-panel border border-border rounded-xl p-5 animate-pulse">
-      <div className="h-4 bg-border rounded w-1/3 mb-4" />
+    <div className={`bg-panel border border-border rounded-xl p-5 animate-pulse ${className}`}>
+      <div className="h-3.5 bg-border rounded-full w-1/3 mb-5" />
       {Array.from({ length: lines }).map((_, i) => (
-        <div key={i} className={`h-3 bg-border rounded mb-2 ${i % 2 === 0 ? "w-full" : "w-2/3"}`} />
+        <div key={i} className={`h-2.5 bg-border rounded-full mb-3 ${i % 2 === 0 ? "w-full" : "w-3/4"}`} />
       ))}
     </div>
   );
